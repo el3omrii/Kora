@@ -1,0 +1,9 @@
+@import url("https://fonts.googleapis.com/css?family=Cairo:400,700&subset=arabic");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.font-cairo {
+    font-family: 'Cairo', Helvetica, sans-serif;
+}
