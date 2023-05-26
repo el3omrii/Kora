@@ -38,7 +38,7 @@ export default function useTranslations() {
       sort.value =  args[3]
     }
     
-    axios.post('/api/translations', {
+    axios.post('/translations', {
         q: searchQuery.value,
         perPage: perPage.value,
         page: currentPage.value,
@@ -68,7 +68,7 @@ export default function useTranslations() {
     })
   }
   const deleteTranslation = (id) => {
-    axios.post('/api/translations/'+id, { _method: 'DELETE' })
+    axios.post('/translations/'+id, { _method: 'DELETE' })
     .then(() => {
       fetchTranslations()
     })
@@ -87,7 +87,7 @@ export default function useTranslations() {
   }
     const saveTranslation = (data) => {
     data._method = 'PUT'
-    axios.post('/api/translations/'+data.key, data)
+    axios.post('/translations/'+data.key, data)
     .then(() => {
       toggleEditing(data.key)
       fetchTranslations()

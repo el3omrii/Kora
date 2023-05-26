@@ -15,6 +15,11 @@ class ScraperController extends Controller
         return view("scraper", compact("source"));
     }
 
+    /* For this to work, add these lines to usesFileParsers
+    //quick fix
+        $xmlString = str_replace("content:", "content_", $xmlString);
+        $xmlString = str_replace("media:", "media_", $xmlString);
+    */
     function entries(Source $source) {
         $items = cache()->remember("items" . $source->name, 3600, function () use ($source) {
             $web = new \Spekulatius\PHPScraper\PHPScraper;
@@ -31,7 +36,7 @@ class ScraperController extends Controller
                     'content' => key_exists('content_encoded', $item) ? $item['content_encoded'] : '' ,
                     'pubDate' => $item['pubDate'],
                     'checked' => false
-                ];
+		];
                 $items[] = $record;
             }
             return $items;

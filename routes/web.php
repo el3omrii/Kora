@@ -5,6 +5,8 @@ use App\Http\Controllers\SourceController;
 use App\Http\Controllers\ScraperController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\MatchController;
+use App\Http\Controllers\TranslationController;
+use App\Http\Controllers\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,11 +53,15 @@ Route::middleware('auth')->group(function () {
     /* Matchs */
     Route::get('/matchs', [MatchController::class, 'index'])->name('match.index');
     Route::get('/matchs/scheduled', [MatchController::class, 'scheduled'])->name('match.scheduled');
+    Route::get('/matchs/fixtures', [MatchController::class, 'fixtures']);
+    Route::post('/matchs/scheduled', [MatchController::class, 'load_scheduled']);
+    Route::post('/matchs/publish', [MatchController::class, 'publish']);
     /* Translations */
-    Route::get('/translations', function() {
-        return view("translation.index");
-    })->name('translations');
-    
+    Route::get('/translations', [TranslationController::class, 'index'])->name('translations');
+    Route::post('/translations', [TranslationController::class, 'translations']);
+    Route::put('/translations/{translation}', [TranslationController::class, 'saveTranslation']);
+    /* Settings */
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     //Route::post('/posts/fetch', [PostController::class, 'fetch'])->name('post.fetch');
 });
 

@@ -49,7 +49,7 @@ export default function useMatchesList() {
       sortBy.value = args[2]
       isSortDirDesc.value=  args[3] === 'asc' ? false : true
     }
-    axios.post('/api/matchs/scheduled', {
+    axios.post('/matchs/scheduled', {
         q: searchQuery.value,
         perPage: perPage.value,
         page: currentPage.value,

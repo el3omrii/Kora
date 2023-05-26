@@ -42,7 +42,7 @@ class SourceController extends Controller
     }
     public function update(Source $source, Request $request) {
         $validated = $request->validate([
-            "name" => "required|unique:sources,$source->id|max:255",
+           // "name" => "required|unique:sources,$source->id|max:255",
             "feed_url" => "required",
             "category" => "required"
         ]);

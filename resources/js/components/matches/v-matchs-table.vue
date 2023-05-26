@@ -82,7 +82,7 @@ const selected = computed(() => {
   return 0
 })
 onMounted(() => {
-    axios.get('/api/matchs/fixtures').then((response) => {
+    axios.get('/matchs/fixtures').then((response) => {
         fixtures.value=response.data
         
         createToast({
@@ -121,7 +121,7 @@ const publishSelected = () => {
     })
 }
 const publish = (idx) => {
-    axios.post('/api/matchs/publish', {
+    axios.post('/matchs/publish', {
         fixture_id: fixtures.value.response[idx].fixture.id,
         fixture_data: fixtures.value.response[idx]
     }).then(() => createToast({
