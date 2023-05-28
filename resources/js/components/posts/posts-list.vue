@@ -64,6 +64,9 @@
                         <template v-slot:image="data">
                             <img :src="data.value.image" class="rounded-md w-20 h-auto" />
                         </template>
+                        <template v-slot:title="data">
+                            <a :href="`/posts/edit/${data.value.id}`">{{ data.value.title }}</a>
+                        </template>
                         <template v-slot:categories="data">
                             <div class="flex flex-wrap">
                                 <span v-for="category in data.value.categories" class="inline-flex items-center py-0.5 px-2 rounded-md cursor-pointer text-xs font-medium hover:bg-purple-600 hover:text-white bg-gray-300 text-gray-700 dark:bg-gray-700 dark:text-gray-300">

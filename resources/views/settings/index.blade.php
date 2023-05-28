@@ -11,7 +11,7 @@
       {{ $message->content }}
     </v-alert>
     @endif
-    <settings-view />
+    <v-settings />
    
   </div>
 </x-app-layout>

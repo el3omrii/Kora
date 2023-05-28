@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Fixture;
 use App\Http\Resources\FixtureResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Models\Translation;
 use App\Helpers\Helper;
 
 class MatchController extends Controller

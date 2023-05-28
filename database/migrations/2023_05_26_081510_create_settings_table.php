@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('website_title');
             $table->string('website_description');
             $table->boolean('cdn')->default(false);
-            $table->string('cdn_url');
+            $table->string('cdn_url')->nullable();
             $table->timestamps();
         });
     }

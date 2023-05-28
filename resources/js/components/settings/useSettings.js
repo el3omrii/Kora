@@ -7,12 +7,17 @@ import 'mosha-vue-toastify/dist/style.css'
 export default function useSettings() {
 
   const settings = ref([])
-
+  const blank = {
+    website_title: null,
+    website_description: null,
+    cdn: null,
+    cdn_url: null
+  }
   const fetchSettings = () => {
 
-    axios.get('/settings')
+    axios.get('/v1/settings')
       .then(response => {
-        settings.value = response.data.data 
+        settings.value = response.data ? response.data : blank
       })
       .catch(() => {
           createToast({
@@ -29,7 +34,7 @@ export default function useSettings() {
   }
   
   const storeSettings = (id) => {
-    axios.post('/settings', settings.value)
+    axios.post('/v1/settings', settings.value)
     .catch(() => {
         createToast({
           title: "Error",

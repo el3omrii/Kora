@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('excerpt');
             $table->text('content');
             $table->string('image')->nullable();
+            $table->boolean('featured')->default(false);
             $table->string("status")->default("published");
             $table->foreignId('source_id')->nullable();
             $table->timestamps();

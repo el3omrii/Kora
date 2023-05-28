@@ -28,9 +28,9 @@ export default function useTranslations() {
   const getCurrentPage = (page) => currentPage.value = page
   const checkRow = checked => checkedRows.value = checked
 
-  /*watch([currentPage, perPage, searchQuery], () => {
+  watch([searchQuery], () => {
     fetchTranslations()
-  })*/  
+  })  
 
   const fetchTranslations = (...args) => {
     if (args[2]) {
