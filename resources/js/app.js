@@ -13,6 +13,7 @@ import VTranslations from './components/translations/v-translations.vue';
 import PostEditor from './components/posts/post-editor.vue';
 import PostsCategories from './components/posts/posts-categories.vue';
 import VSettings from './components/settings/v-settings.vue';
+import VDashboard from './components/dashboard/v-dashboard.vue';
 
 import './bootstrap';
 
@@ -42,6 +43,7 @@ app.component('v-translations', VTranslations);
 app.component('post-editor', PostEditor);
 app.component('posts-categories', PostsCategories);
 app.component('v-settings', VSettings);
+app.component('v-dashboard', VDashboard);
 app.directive('tooltip', tooltip);
 
 app.mount("#app");

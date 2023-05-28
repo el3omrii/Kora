@@ -12,6 +12,14 @@ class ApiController extends Controller
         return Settings::first();
     }
 
+    public function stats() {
+        return response()->json([
+            "posts" => Post::all()->count(),
+            "sources" => \App\Models\Source::all()->count(),
+            "translations" => \App\Models\Translation::all()->count(),
+        ]);
+    }
+
     public function store_settings(Request $request) {
         $request->validate([
             "website_title" => "required",
