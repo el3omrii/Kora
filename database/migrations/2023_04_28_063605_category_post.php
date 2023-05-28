@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('category_post', function (Blueprint $table) {
             $table->foreignId('category_id');
             $table->foreignId('post_id');
-            $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('post_id')->references('id')->on('posts');
