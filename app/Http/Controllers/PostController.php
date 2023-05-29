@@ -46,8 +46,33 @@ class PostController extends Controller
     }
     public function edit(Post $post, Request $request) {
         if ($request->ajax())
-            return $post->load('categories');
+            return $post->load('categories')->setHidden(['created_at', 'updated_at']);
         return view("post.edit", compact('post'));
+    }
+    public function update(Request $request, Post $post) {
+        $request->validate([
+            "title" => "required",
+            "slug" => "required",
+        ]);
+        
+        $post->fill($request->all())->save();
+        //attach categories
+        if ($request->has('categories')) {
+            $post->categories()->detach();
+            $post->categories()->attach($request->categories);
+        }
+        //upload
+        $folder = \App\Helpers\Helper::createUploadFolder($post);
+        if ($file = $request->file("image")) {
+            //remove old pic
+            unlink(public_path($post->image));
+            $filename = $file->getClientOriginalName();
+            $upload = $file->storeAs($folder, $filename, 'public');
+            $post->image = $upload;
+        }
+        //save
+        $post->save();
+        return response('ok', 200);
     }
     public function destroy (Post $post) 
     {

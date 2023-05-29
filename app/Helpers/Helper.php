@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Helper {
 
@@ -47,5 +48,15 @@ class Helper {
         $string = preg_replace("/[\s-]+/", " ", $string);
         $string = preg_replace("/[\s_]/", $separator, $string);
         return $string;
+    }
+
+    public static function grab_image($url, $save_path) {
+        $imageData = file_get_contents($url);
+        $imageInfo = getimagesizefromstring($imageData);
+        // Determine the file extension based on the MIME type
+        $extension = image_type_to_extension($imageInfo[2]); // 2 represents the IMAGETYPE constant for the image type
+        $image_path = "public/$save_path/" . Str::random(10) . $extension;
+        Storage::put($image_path, $imageData);
+        return $image_path;
     }
 }

@@ -70,11 +70,7 @@ class ScraperController extends Controller
         $source->posts()->save(($post));
         //upload pic
         $folder = \App\Helpers\Helper::createUploadFolder($post);
-        $image = file_get_contents($record['image']);
-        $name = substr($record['image'], strrpos($record['image'], '/') + 1);
-        $image_path = $folder .'/'. $name;
-        Storage::put("public/$image_path", $image);
-        $post->image = $image_path;
+        $post->image = \App\Helpers\Helper::grab_image($record['image'], $folder);
         $post->save();
         // publish post in the same category as the source
         $post->categories()->attach($source->category_id);

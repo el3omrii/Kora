@@ -1,5 +1,6 @@
 import { ref } from "vue"
-
+import { createToast } from 'mosha-vue-toastify';
+import 'mosha-vue-toastify/dist/style.css'
 export default function useNewPost () {
     //default image
     const defaultImage = ref(`data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
@@ -60,12 +61,18 @@ export default function useNewPost () {
         data.append(element, post.value[element])
       });
       data.append('image', imageFile.value)*/
-      axios.post("/posts/new", post.value, {headers: {'Content-Type': 'multipart/form-data'}})
-        .then(response => {
-            if (response.status == 201) {
-                location.href="/posts"
-            }
-        })
+      const url = editMode.value ? `/posts/edit/${post.value.id}` : "/posts/new"
+      axios.post(url, post.value, {headers: {'Content-Type': 'multipart/form-data'}})
+        .then(() => createToast({
+          title: "Success",
+          description: "Article is now saved",
+      },
+      {
+          type: "success",
+          timeout: 5000,
+          showIcon: true,
+          position: 'bottom-right',
+      }))
         .catch(error => {
             if (error.response.status == 422) {
                 errors.value = error.response.data.errors;
