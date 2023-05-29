@@ -85,9 +85,9 @@ class PostController extends Controller
         // remove records from pivot table category_post
         $post->categories()->detach();
         // remove pic
-        Storage::delete($post->image);
-        if ($post->delete())
-            return response('OK', 200);
+        if(Storage::delete("public".$post->image))
+            if ($post->delete())
+                return response('OK', 200);
         return response('not ok', 500);
     }
     public function categories(Request $request) {
