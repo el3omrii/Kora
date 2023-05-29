@@ -30,6 +30,7 @@ class PostController extends Controller
             'excerpt' => Str::words($request->content, 20, '(...)'),
             "content" => $request->content,
         ]);
+        $post->featured = $request->has("featured")?1:0;
         $post->save();
         //attach categories
         $post->categories()->attach($request->categories);
@@ -55,7 +56,12 @@ class PostController extends Controller
             "slug" => "required",
         ]);
         
-        $post->fill($request->all())->save();
+        $post->title = $request->title;
+        $post->slug = $request->slug;
+        $post->excerpt = Str::words($request->content, 20, '(...)');
+        $post->content = $request->content;
+        $post->featured = $request->has("featured")?1:0;
+        $post->save();
         //attach categories
         if ($request->has('categories')) {
             $post->categories()->detach();
