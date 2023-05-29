@@ -55,8 +55,8 @@ class Helper {
         $imageInfo = getimagesizefromstring($imageData);
         // Determine the file extension based on the MIME type
         $extension = image_type_to_extension($imageInfo[2]); // 2 represents the IMAGETYPE constant for the image type
-        $image_path = "public/$save_path/" . Str::random(10) . $extension;
-        Storage::put($image_path, $imageData);
+        $image_path = "$save_path/" . Str::random(10) . $extension;
+        Storage::put("public" . $image_path, $imageData);
         return $image_path;
     }
 }
