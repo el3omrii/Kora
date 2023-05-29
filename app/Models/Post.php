@@ -23,6 +23,6 @@ class Post extends Model
         if ($settings->cdn) {
             return $settings->cdn_url . $this->attributes["image"];
         }
-        return $this->attrobutes["image"];
+        return $this->attributes["image"];
     }
 }
