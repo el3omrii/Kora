@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    protected $hidden = ["pivot"];
     protected $guarded = [];
 
     public function source() {
@@ -17,7 +18,7 @@ class Post extends Model
     public function tags() {
         return $this->belongsToMany(\App\Models\Tag::class);
     }
-
+    
     protected function getImageAttribute() {
         $settings = \App\Models\Settings::first();
         if ($settings->cdn) {
