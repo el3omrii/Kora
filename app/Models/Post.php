@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    use HasFactory;
-
     protected $guarded = [];
 
     public function source() {
@@ -19,5 +16,13 @@ class Post extends Model
     }
     public function tags() {
         return $this->belongsToMany(\App\Models\Tag::class);
+    }
+
+    protected function getImageAttribute() {
+        $settings = \App\Models\Settings::first();
+        if ($settings->cdn) {
+            return $settings->cdn_url . $this->attributes["image"];
+        }
+        return $this->attrobutes["image"];
     }
 }

@@ -20,6 +20,10 @@ class ApiController extends Controller
         ]);
     }
 
+    public function fetch_post(String $slug) {
+        $article = Post::where('slug', $slug)->with('source')->firstOrFail();
+        return $article;
+    }
     public function store_settings(Request $request) {
         $request->validate([
             "website_title" => "required",
