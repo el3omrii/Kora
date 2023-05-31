@@ -18,4 +18,12 @@ class Source extends Model
     public function category() {
         return $this->belongsTo(\App\Models\Category::class);
     }
+
+    protected function getLogoAttribute($value) {
+        $settings = \App\Models\Settings::first();
+        if ($settings->cdn) {
+            return $settings->cdn_url .'/'. $value;
+        }
+        return $value;
+    }
 }

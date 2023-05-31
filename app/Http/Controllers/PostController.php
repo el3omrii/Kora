@@ -102,6 +102,7 @@ class PostController extends Controller
         ]);
         Category::create([
             "name" => $request->name,
+            "slug" => \App\Helpers\Helper::make_slug($request->name),
             "description" => $request->description,
             "parent_id" => $request->parent_id
         ]);

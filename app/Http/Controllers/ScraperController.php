@@ -51,9 +51,17 @@ class ScraperController extends Controller
         if ($source->content_regex) {
             // scrape for content
             $web = new \Spekulatius\PHPScraper\PHPScraper;
-            $content = $web->go($record['link'])->filter($source->content_regex);
-            $content = $content->text() ? $content->text() : $content->attr('content');
+            if ($source->content_regex == "<p>"){
+                $content = $web->go($record['link']);
+                $script = $content->filter('//script[contains(text(),"article_content")]')->text();
+                if (preg_match('/article_content = \"([^\"]*)\";/', $script, $matches))
+                    $content = $matches[1];
+            }
+            else {
+                $content = $web->go($record['link'])->filter($source->content_regex);
+                $content = $content->text() ? $content->text() : $content->attr('content');
             //$content = $web->go($record['link'])->filter("//meta[@itemprop='articleBody']")->attr("content"); dd($content);//->text();
+            }
         } else {
             $content = strip_tags($record['content']);
         }
