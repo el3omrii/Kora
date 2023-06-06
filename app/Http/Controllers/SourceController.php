@@ -29,12 +29,14 @@ class SourceController extends Controller
         if ($file = $request->file("source_image")) {
             $upload = $file->storeAs("/uploads", preg_replace('/\s+/','',$request->name).'.'.$file->extension(), 'public');
         }
+        if ($request->content_type == "regex")
         Source::create([
             "name" => $request->name,
             "feed_url" => $request->feed_url,
             "description" => $request->description,
             "logo" => $upload,
-            "content_regex" => $request->content_regex,
+            "content_regex" => $request->content_type == "regex" ? $request->content_regex : null,
+            "content_xpath" => $request->content_type == "xpath" ? $request->content_regex : null,
             "image_type" => $request->image_type,
             "category_id" => $request->category
         ]);

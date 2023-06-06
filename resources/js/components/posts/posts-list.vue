@@ -67,10 +67,10 @@
                         <template v-slot:title="data">
                             <a :href="`/posts/edit/${data.value.id}`">{{ data.value.title }}</a>
                         </template>
-                        <template v-slot:categories="data">
+                        <template v-slot:category="data">
                             <div class="flex flex-wrap">
-                                <span v-for="category in data.value.categories" class="inline-flex items-center py-0.5 px-2 rounded-md cursor-pointer text-xs font-medium hover:bg-purple-600 hover:text-white bg-gray-300 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                                    {{ category.name }}
+                                <span class="inline-flex items-center py-0.5 px-2 rounded-md cursor-pointer text-xs font-medium hover:bg-purple-600 hover:text-white bg-gray-300 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                                    {{ data.value.category.name }}
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path>
                                 </svg>
@@ -92,6 +92,18 @@
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
                                 </svg>
                                 Rejected
+                            </span>
+                            <span>
+                                <SwitchGroup @click="setFeatured(data.value.id)">
+                                <div class="flex items-center mt-2">
+                                    <SwitchLabel class="mr-2 text-sm">Featured</SwitchLabel>
+                                    <Switch v-model="data.value.featured" :class='data.value.featured ? "bg-blue-600" : "bg-gray-200"'
+                                    class="relative inline-flex h-4 w-8 items-center rounded-full transition-colors">
+                                    <span :class='data.value.featured ? "translate-x-4" : "translate-x-1"'
+                                        class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform" />
+                                    </Switch>
+                                </div>
+                                </SwitchGroup>
                             </span>
                         </template>
                         <template v-slot:actions="data">
@@ -138,10 +150,12 @@ import { onMounted } from 'vue'
 import TableLite from "vue3-table-lite"
 import usePostsList from './usePostsList'
 import { DateTime } from 'luxon'
+import { Switch, SwitchLabel, SwitchGroup } from '@headlessui/vue'
 const {
     fetchPosts,
     deletePost,
     deleteSelected,
+    setFeatured,
     posts,
     checkedRows,
     tableColumns,
@@ -153,7 +167,6 @@ const {
     getCurrentPage,
     checkRow,
 } = usePostsList()
-
 onMounted(()=>{
     fetchPosts()
 })

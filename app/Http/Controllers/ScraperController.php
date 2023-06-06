@@ -51,14 +51,14 @@ class ScraperController extends Controller
         if ($source->content_regex) {
             // scrape for content
             $web = new \Spekulatius\PHPScraper\PHPScraper;
-            if ($source->content_regex == "<p>"){
+            if ($regex = $source->content_regex){
                 $content = $web->go($record['link']);
                 $script = $content->filter('//script[contains(text(),"article_content")]')->text();
-                if (preg_match('/article_content = \"([^\"]*)\";/', $script, $matches))
+                if (preg_match($regex, $script, $matches))
                     $content = $matches[1];
             }
             else {
-                $content = $web->go($record['link'])->filter($source->content_regex);
+                $content = $web->go($record['link'])->filter($source->content_xpath);
                 $content = $content->text() ? $content->text() : $content->attr('content');
             //$content = $web->go($record['link'])->filter("//meta[@itemprop='articleBody']")->attr("content"); dd($content);//->text();
             }
@@ -79,9 +79,10 @@ class ScraperController extends Controller
         //upload pic
         $folder = \App\Helpers\Helper::createUploadFolder($post);
         $post->image = \App\Helpers\Helper::grab_image($record['image'], $folder);
+        //attach category
+        $post->category_id = $source->category_id; 
         $post->save();
-        // publish post in the same category as the source
-        $post->categories()->attach($source->category_id);
+        
         return response('success', 204);
     }
 }

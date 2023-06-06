@@ -15,7 +15,7 @@ export default function usePostsList() {
     { label: 'ID', field:'id', isKey: true, sortable: true },
     { label: 'Image', field: 'image', headerClasses: ["text-base"] },
     { label: 'Title', field: 'title', headerClasses: ["text-base"], width: "35%" },
-    { label: 'Categories', field: 'categories', headerClasses: ["text-base"] },
+    { label: 'Categories', field: 'category', headerClasses: ["text-base"] },
     { label: 'Created at', field: 'created_at', sortable: true, headerClasses: ["text-base"], width: "130px" },
     { label: 'Status', field: 'status', sortable: true, headerClasses: ["text-base"] },
     { label: 'Actions', field:'actions' },
@@ -65,6 +65,9 @@ export default function usePostsList() {
           })
       })
   }
+  const setFeatured = post => {
+    axios.post('/posts/setfeatured/'+post)
+  }
   const deleteSelected = () => {
     checkedRows.value.forEach(item => {
       deletePost(item)
@@ -92,6 +95,7 @@ export default function usePostsList() {
     fetchPosts,
     deletePost,
     deleteSelected,
+    setFeatured,
     tableColumns,
     checkedRows,
     perPage,

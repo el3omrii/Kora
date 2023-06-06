@@ -50,7 +50,7 @@ class ApiController extends Controller
     }
 
     public function featured_posts() {
-        return Post::where('featured', true)->latest()->take(5)->with('categories')->get();
+        return Post::where('featured', true)->latest()->take(5)->with('category.parent')->get();
     }
     
     public function latest_posts(Request $request) {

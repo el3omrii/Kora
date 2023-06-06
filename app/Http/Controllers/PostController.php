@@ -50,6 +50,11 @@ class PostController extends Controller
             return $post->load('categories')->setHidden(['created_at', 'updated_at']);
         return view("post.edit", compact('post'));
     }
+    public function set_featured(Post $post) {
+        $post->featured = !$post->featured;
+        $post->save();
+        return response('ok', 200);
+    }
     public function update(Request $request, Post $post) {
         $request->validate([
             "title" => "required",
@@ -82,10 +87,8 @@ class PostController extends Controller
     }
     public function destroy (Post $post) 
     {
-        // remove records from pivot table category_post
-        $post->categories()->detach();
         // remove pic
-        if(Storage::delete("public".$post->image))
+        if(Storage::delete("public".$post->getRawOriginal('image')))
             if ($post->delete())
                 return response('OK', 200);
         return response('not ok', 500);
@@ -124,6 +127,6 @@ class PostController extends Controller
         if($request->q)
             $query = $query->where("title", "like", "%$request->q%");
             
-        return PostResource::collection($query->with("categories")->paginate($request->perPage));
+        return PostResource::collection($query->with('category')->paginate($request->perPage));
     }
 }

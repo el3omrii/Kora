@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/edit/{post}', [PostController::class, 'update'])->name('post.update');
     Route::post('/posts/fetch', [PostController::class, 'fetch'])->name('post.fetch');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('post.destroy');
+    Route::post('/posts/setfeatured/{post}', [PostController::class, 'set_featured'])->name('post.set_featured');
     /* POSTS CATEGORIES */
     Route::get('/posts/categories', [PostController::class, 'categories'])->name('post.categories');
     Route::post('/posts/categories', [PostController::class, 'storeCategory'])->name('post.categories.store');
