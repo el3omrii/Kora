@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('fixtures', function (Blueprint $table) {
             $table->id();
-            $table->integer('fixture_id', false, true)->unique();
+            $table->unsignedSmallInteger('fixture_id', false, true)->unique();
             $table->string('home');
             $table->string('away');
             $table->string('league');

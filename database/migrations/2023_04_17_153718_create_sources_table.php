@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('feed_url');
             $table->string('description')->nullable();
             $table->string('content_regex')->nullable();
+            $table->string('content_xpath')->nullable();
             $table->string('image_type')->nullable();
             $table->string('logo')->nullable();
             $table->foreignId('category_id');

@@ -21,10 +21,13 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->boolean('featured')->default(false);
             $table->string("status")->default("published");
+            $table->unsignedInteger("views")->default(0);
             $table->foreignId('source_id')->nullable();
+            $table->foreignId('category_id')->nullable();
             $table->timestamps();
 
             $table->foreign('source_id')->references('id')->on('sources');
+            $table->foreign('category_id')->references('id')->on('categories');
         });
     }
 

@@ -23,8 +23,8 @@ class ApiController extends Controller
     }
 
     public function fetch_post(String $slug) {
-        $article = Post::where('slug', $slug)->with('source')->firstOrFail();
-        $article->related = $article->categories()->first()->posts()->limit(6)->get()->setHidden(['content', 'excerpt']);
+        $article = Post::where('slug', $slug)->with('source', 'categories')->firstOrFail();
+        $article->related = $article->categories()->first()->posts()->limit(6)->get()->setHidden(['content', 'pivot', 'source_id', 'source_link']);
         return $article;
     }
     
