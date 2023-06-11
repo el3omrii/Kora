@@ -22,8 +22,15 @@ class ScraperController extends Controller
     */
     function entries(Source $source) {
         $items = cache()->remember("items" . $source->name, 3600, function () use ($source) {
-            $web = new \Spekulatius\PHPScraper\PHPScraper;
-            $rss = $web->rssRaw($source->feed_url); //\App\Models\Source::all()->where('name','Kooora')->first()->feed_url;
+		$web = new \Spekulatius\PHPScraper\PHPScraper;
+		$web->setConfig([
+  'agent' => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36'
+		]);
+		//try {
+			$rss = $web->rssRaw($source->feed_url); //\App\Models\Source::all()->where('name','Kooora')->first()->feed_url;
+		/*} catch (\Exception $e) { 
+            return response(null, 403)->json(['error' => 403]); 
+        }*/
             $tree = (object)$rss[0];
             $items = [];
             foreach ($tree->channel["item"] as $item) {
@@ -44,11 +51,38 @@ class ScraperController extends Controller
         return response()->json($items);
     }
 
+    function manual(Request $request) {
+        $source = Source::findOrFail($request->source_id);
+        $items = cache()->remember("items" . $source->name, 3600, function () use ($source, $request) {
+            $web = new \Spekulatius\PHPScraper\PHPScraper;
+            $rss = $web->parseXml($request->feed);
+            
+            $tree = (object)$rss['channel'];
+            
+            $items = [];
+            foreach ($tree->item as $item) {
+
+                $record = [
+                    'title' => $item['title'],
+                    'description' => $item['description'],
+                    'image' => $item[$source->image_type]["@attributes"]["url"],
+                    'link' => $item['link'],
+                    'content' => key_exists('content_encoded', $item) ? $item['content_encoded'] : '' ,
+                    'pubDate' => $item['pubDate'],
+                    'checked' => false
+        ];
+                $items[] = $record;
+            }
+            return $items;
+        });
+        return redirect()->route('source.scraper', ['source' => $request->source_id]);
+    }
+
     function publish(Request $request) {
         $source = Source::find($request->source_id);
         $items = cache()->get('items' . $source->name);
         $record = $items[$request->index];
-        if ($source->content_regex) {
+        if ($source->content_regex || $source->content_xpath) {
             // scrape for content
             $web = new \Spekulatius\PHPScraper\PHPScraper;
             if ($regex = $source->content_regex){

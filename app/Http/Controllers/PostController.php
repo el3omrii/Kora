@@ -47,7 +47,7 @@ class PostController extends Controller
     }
     public function edit(Post $post, Request $request) {
         if ($request->ajax())
-            return $post->load('categories')->setHidden(['created_at', 'updated_at']);
+            return $post->load('category')->setHidden(['created_at', 'updated_at']);
         return view("post.edit", compact('post'));
     }
     public function set_featured(Post $post) {
@@ -68,10 +68,7 @@ class PostController extends Controller
         $post->featured = $request->has("featured")?1:0;
         $post->save();
         //attach categories
-        if ($request->has('categories')) {
-            $post->categories()->detach();
-            $post->categories()->attach($request->categories);
-        }
+        $post->category_id = $request->category_id;
         //upload
         $folder = \App\Helpers\Helper::createUploadFolder($post);
         if ($file = $request->file("image")) {

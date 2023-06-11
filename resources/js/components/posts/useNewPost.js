@@ -49,8 +49,9 @@ export default function useNewPost () {
       reader.readAsDataURL(file)
     }
 
-    const updateCategories = (cat, state) => { 
-      state ? selectedCategories.value.push(cat.id) : selectedCategories.value.splice(categories.value.indexOf(cat.id))
+    const updateCategory = (cat) => { 
+      post.value.category_id = cat.id
+      console.log(cat)
     }
 
     const submit = () => {
@@ -92,6 +93,6 @@ export default function useNewPost () {
       errors,
       editMode,
       submit,
-      updateCategories
+      updateCategory
     }
 }

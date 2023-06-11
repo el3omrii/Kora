@@ -11,6 +11,6 @@
       {{ $message->content }}
     </v-alert>
     @endif
-      <v-feed-table :source="{name: '{{$source->name}}', id: {{$source->id}}}"></v-feed-table>
+      <v-feed-table :source="{name: '{{$source->name}}', id: {{$source->id}}, feed_url: '{{$source->feed_url}}'}"></v-feed-table>
   </div>
 </x-app-layout>

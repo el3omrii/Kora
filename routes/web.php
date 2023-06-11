@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/sources/scraper/{source}', [ScraperController::class, 'scrape'])->name('source.scraper');
     Route::get('/sources/scraper/{source}/entries', [ScraperController::class, 'entries'])->name('source.scraper.entries');
     Route::post('/sources/scraper/publish', [ScraperController::class, 'publish'])->name('source.scraper.publish');
+    Route::post('/sources/scraper/manual', [ScraperController::class, 'manual'])->name('source.scraper.manual');
     /* Posts */
     Route::get('/posts', [PostController::class, 'index'])->name('post.index');
     Route::get('/posts/new', [PostController::class, 'create'])->name('post.create');

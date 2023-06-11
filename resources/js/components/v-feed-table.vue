@@ -143,6 +143,26 @@
       </div>
     </div>
   </div>
+  <v-modal v-if="showModal" type="success" title="Manual feed" width="sm" @close="showModal = false">
+      <!-- Card -->
+      <div class="bg-white border shadow-sm rounded-xl p-4 dark:bg-gray-800 dark:border-gray-700">
+        <form action="/sources/scraper/manual" method="POST" enctype="multipart/form-data">
+          <input type="hidden" name="_token" :value="csrf" />
+          <input type="hidden" name="source_id" :value="source.id" />
+          <div class="flex sm:flex-col items-center gap-4">
+          <p>Could not load the feed. follow this url and try copy paste. <a :href="source.feed_url" target="_blank">{{ source.feed_url }}</a></p>
+              <textarea class="w-full text-base px-4 py-2 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500"
+                        id="feed" name="feed" rows="10" placeholder="feed content"></textarea>
+            </div>
+          
+          <div class="text-right mt-4">
+            <button @click="showModal = false" class="px-4 py-2 text-sm text-gray-600 focus:outline-none hover:underline">Cancel</button>
+            <button type="submit" class="mr-2 px-4 py-2 text-sm rounded text-white bg-teal-500 focus:outline-none hover:bg-teal-400">Add</button>
+          </div>
+        </form>
+      </div>
+      <!-- End Card -->
+    </v-modal>
   <!-- End Card -->
 </template>
 
@@ -156,7 +176,10 @@ const items = ref([])
 const props = defineProps({
     source: Object
 })
+const showModal = ref(false)
+const csrf = ref()
 onMounted(() => {
+    csrf.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     axios.get(`/sources/scraper/${props.source.id}/entries`)
         .then((response) => {
             items.value = response.data
@@ -171,6 +194,9 @@ onMounted(() => {
                 position: 'bottom-right',
             })
         })
+        .catch((response) => {
+          showModal.value = true
+        }) 
 })
 const checkAll = () => {
     items.value.forEach(element => {

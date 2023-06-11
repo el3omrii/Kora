@@ -29,7 +29,7 @@ class SourceController extends Controller
         if ($file = $request->file("source_image")) {
             $upload = $file->storeAs("/uploads", preg_replace('/\s+/','',$request->name).'.'.$file->extension(), 'public');
         }
-        if ($request->content_type == "regex")
+        
         Source::create([
             "name" => $request->name,
             "feed_url" => $request->feed_url,

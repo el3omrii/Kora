@@ -110,12 +110,10 @@
                                                 class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                                         </label>
                                     </div>
-                                    <div v-if="post.categories" class="mt-2">
+                                    <div v-if="post.category" class="mt-2">
                                         <label>Post Category</label>
                                         <div class="flex flex-wrap gap-4 mt-2">
-                                            <v-checkbox v-for="category in categories" :category="category"
-                                                :checked="post.categories" @category-selected="updateCategories">
-                                            </v-checkbox>
+                                            <v-checkbox :categories="categories" :selected="post.category" v-model="post.category_id"/>
                                         </div>
                                         <span v-if="errors && errors.categories" class="text-sm text-red-500">{{
                                             errors.categories[0] }}</span>
@@ -161,7 +159,7 @@ const {
     categories,
     errors,
     editMode,
-    updateCategories,
+    updateCategory,
     submit
 } = useNewPost()
 //init

@@ -145,10 +145,20 @@
               <textarea id="description" name="description" rows="3" class="w-3/4 text-base px-4 py-2 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500" placeholder="Some description">{{$editedsource->description}}</textarea>
             </div>
           </div>
-          <div class="mb-2 sm:mb-4 flex gap-4">
+          <div class="mb-2 sm:mb-4 flex items-center gap-4">
             <div class="w-full">
-              <x-input-label for="content_regex" class="font-medium" value="Content regex/xpath" />
-              <x-text-input id="content_regex" class="block mt-1 w-3/4 border rounded-md" type="text" name="content_regex" :value="$editedsource->content_regex" />
+            <div class="flex gap-x-2">
+                <x-input-label for="content_regex" class="font-medium" value="Content" />
+                <input id="content_xpath" type="radio" name="content_type" value="xpath" class="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" {{ $editedsource->content_xpath ? 'checked' : '' }}>
+                <label for="content_xpath" class="text-sm font-medium text-gray-900 ml-2 block">
+                  XPath
+                </label>
+                <input id="content_regex" type="radio" name="content_type" value="regex" class="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" {{ $editedsource->content_regex ? 'checked' : '' }}>
+                <label for="content_regex" class="text-sm font-medium text-gray-900 ml-2 block">
+                  Regex
+                </label>
+              </div>
+              <x-text-input id="content_regex" class="block mt-1 w-3/4 border rounded-md" type="text" name="content_regex" value="{{ $editedsource->content_regex ? $editedsource->content_regex : $editedsource->content_xpath }}"/>
               <x-input-error :messages="$errors->get('content_regex')"></x-input-error>
             </div>
             <div class="w-full">
