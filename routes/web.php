@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/matchs/fixtures', [MatchController::class, 'fixtures']);
     Route::post('/matchs/scheduled', [MatchController::class, 'load_scheduled']);
     Route::post('/matchs/publish', [MatchController::class, 'publish']);
+    Route::put('/matchs/{fixture}', [MatchController::class, 'update']);
+    Route::delete('/matchs/{fixture}', [MatchController::class, 'destroy']);
     /* Translations */
     Route::get('/translations', [TranslationController::class, 'index'])->name('translations');
     Route::post('/translations', [TranslationController::class, 'translations']);

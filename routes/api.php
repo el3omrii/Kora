@@ -24,4 +24,6 @@ Route::middleware('api')->group(function() {
     Route::get('/settings', [ApiController::class, 'settings']);
     Route::post('/settings', [ApiController::class, 'store_settings']);
     Route::get('/stats', [ApiController::class, 'stats']);
+    Route::get('/fixtures', [ApiController::class, 'fixtures']);
+    Route::get('/fixtures/{id}', [ApiController::class, 'fixture']);
 });

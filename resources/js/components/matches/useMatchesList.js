@@ -74,8 +74,47 @@ export default function useMatchesList() {
       })
   }
 
+  const deleteMatch = (id) => {
+    axios.post('/matchs/'+id, { _method: 'DELETE' })
+    .then(() => {
+      fetchMatches()
+    })
+    .catch(() => {
+        createToast({
+          title: "Error",
+          description: "Something went wrong!",
+        },
+        {
+          type: "danger",
+          timeout: 5000,
+          showIcon: true,
+          position: 'bottom-right',
+        })
+    })
+  }
+  const updateMatch = (id) => {
+    axios.post('/matchs/'+id, { _method: 'PUT' })
+    .then(() => {
+      fetchMatches()
+    })
+    .catch(() => {
+        createToast({
+          title: "Error",
+          description: "Something went wrong!",
+        },
+        {
+          type: "danger",
+          timeout: 5000,
+          showIcon: true,
+          position: 'bottom-right',
+        })
+    })
+  }
+
   return {
     fetchMatches,
+    deleteMatch,
+    updateMatch,
     tableColumns,
     perPage,
     currentPage,

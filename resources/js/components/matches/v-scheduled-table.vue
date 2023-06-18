@@ -47,49 +47,31 @@
                           <img :src="data.value.fixture_data.league.logo" class="rounded-md w-20 h-auto max-h-20 object-contain" />
                       </template>
                       <template v-slot:homeTeam="data">
-                          <img :src="data.value.fixture_data.teams.home.logo" class="rounded-md w-20 h-auto" />
+                          <div class="flex flex-col items-center">
+                            <img :src="data.value.fixture_data.teams.home.logo" class="rounded-md w-20 h-auto" />
+                            <span>{{ data.value.home }}</span>
+                          </div>
                       </template>
                       <template v-slot:date="data">
                           {{ DateTime.fromISO(data.value.fixture_data.fixture.date).toRelative() }}
                       </template>
                       <template v-slot:awayTeam="data">
-                          <img :src="data.value.fixture_data.teams.away.logo" class="rounded-md w-20 h-auto" />
+                          <div class="flex flex-col items-center">
+                            <img :src="data.value.fixture_data.teams.away.logo" class="rounded-md w-20 h-auto" />
+                            <span>{{ data.value.away }}</span>
+                          </div>
                       </template>
                       <template v-slot:status="data">
-                          <span v-if="data.value.status === 'published'" class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                              <svg class="w-2.5 h-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"></path>
-                              </svg>
-                              Published
-                          </span>
-                          <span v-if="data.status === 'unpublished'" class="inline-flex items-center gap-1.5 py-0.5 px-2 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                              <svg class="w-2.5 h-2.5" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                              <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"></path>
-                              </svg>
-                              Rejected
-                          </span>
+                      {{data.value.fixture_data.fixture.status.long}}
                       </template>
                       <template v-slot:actions="data">
                           <div class="flex item-center justify-center">
-                              <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" v-title="'View'">
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                      stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                      </path>
-                                  </svg>
+                              <div @click="updateMatch(data.value.id)" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" v-tooltip="'Update'">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
                               </div>
-                              <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" v-title="'Edit'">
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                      stroke="currentColor">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                                      </path>
-                                  </svg>
-                              </div>
-                              <div class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" v-title="'Delete'">
+                              <div @click="deleteMatch(data.value.id)" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" v-tooltip="'Delete'">
                                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                       stroke="currentColor">
                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -116,6 +98,8 @@ import { DateTime } from 'luxon'
 
 const {
   fetchMatches,
+  deleteMatch,
+  updateMatch,
   matches,
   tableColumns,
   perPage,

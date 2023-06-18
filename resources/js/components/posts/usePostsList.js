@@ -24,7 +24,7 @@ export default function usePostsList() {
   const perPage = ref(10)
   const totalPosts = ref(0)
   const currentPage = ref(1)
-  const perPageOptions = [10, 25, 50, 100]
+  const perPageOptions = [{value:10, text:10}, {value:25, text:25}, {value:50, text:50}, {value:100, text:100}]
   const searchQuery = ref('')
   const sortBy = ref('id')
   const sort = ref('desc')
@@ -41,6 +41,8 @@ export default function usePostsList() {
       sortBy.value = args[2]
       sort.value =  args[3]
     }
+    if (args[1])
+      perPage.value = args[1]
     axios.post('/posts/fetch', {
         q: searchQuery.value,
         perPage: perPage.value,

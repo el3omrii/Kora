@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('key', false, true)->primary();
             $table->string('value');
             $table->string('original');
+            $table->timestamps();
         });
     }
 

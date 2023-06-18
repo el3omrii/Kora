@@ -56,6 +56,7 @@
                                 :rows="posts" 
                                 :total="totalPosts"
                                 :page-size="perPage"
+                                :pageOptions="perPageOptions"
                                 :page.sync="currentPage"
                                 @get-now-page="getCurrentPage"
                                 @do-search="fetchPosts"
@@ -160,6 +161,7 @@ const {
     checkedRows,
     tableColumns,
     perPage,
+    perPageOptions,
     currentPage,
     searchQuery,
     totalPosts,

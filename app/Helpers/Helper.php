@@ -34,6 +34,14 @@ class Helper {
         return $path;
     }
 
+    public static function createFolder($path)
+    {
+        $path = "/uploads/{$path}";
+
+        Storage::makeDirectory("public$path");
+        return $path;
+    }
+
     public static function make_slug($string = null, $separator = "-") {
         if (is_null($string)) {
             return "";
@@ -56,6 +64,15 @@ class Helper {
         // Determine the file extension based on the MIME type
         $extension = image_type_to_extension($imageInfo[2]); // 2 represents the IMAGETYPE constant for the image type
         $image_path = "$save_path/" . Str::random(10) . $extension;
+        Storage::put("public" . $image_path, $imageData);
+        return $image_path;
+    }
+    public static function grab_logo($url, $save_path) {
+        $imageName = basename($url);
+        $image_path = "$save_path/$imageName";
+        if (file_exists( public_path() . $image_path))
+            return $image_path;
+        $imageData = file_get_contents($url);
         Storage::put("public" . $image_path, $imageData);
         return $image_path;
     }

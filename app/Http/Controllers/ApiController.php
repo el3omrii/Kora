@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Settings;
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\Fixture;
 use App\Http\Resources\PostResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class ApiController extends Controller
 {
@@ -22,16 +24,32 @@ class ApiController extends Controller
         ]);
     }
 
+    public function fixtures() {
+        return Fixture::latest()->get();
+    }
+    public function fixture(String $id) {
+	    $fixture = Fixture::where("fixture_id", $id)->get();
+        $data = cache()->remember("fixture_$id", 3600, function() use ($id) {
+            return json_decode(\App\Helpers\Helper::callApi("fixtures?id=$id"));
+        });
+        return response()->json(["fixture" => $fixture[0], "data" => $data->response[0]]);
+    }
+
     public function fetch_post(String $slug) {
         $article = Post::where('slug', $slug)->with('source', 'category')->firstOrFail();
-        $article->related = $article->category->posts()->limit(6)->get()->setHidden(['content', 'pivot', 'source_id', 'source_link']);
+	$article->related = $article->category->posts()->limit(6)->get()->setHidden(['content', 'pivot', 'source_id', 'source_link']);
+	// Check if the post has already been viewed in the current session
+	if (!Session::has('viewed_posts.'.$article->id)) {
+		$article->increment('views');
+		Session::put('viewed_posts.'.$article->id, true);
+	}
         return $article;
     }
     
-    public function category_posts(String $slug) {
-        //$category = Category::where('slug', $slug);
-        $category = Category::first();
-	    return PostResource::collection($category->posts()->orderBy('created_at', 'desc')->paginate(12))->additional(['category' => $category]);
+    public function category_posts(Request $request, String $slug) {
+        $category = Category::where('slug', $slug)->firstOrFail();
+        $orderBy = $request->orderBy;
+	    return PostResource::collection($category->posts()->orderBy($orderBy, 'desc')->paginate(12))->additional(['category' => $category]);
     }
 
     public function store_settings(Request $request) {
