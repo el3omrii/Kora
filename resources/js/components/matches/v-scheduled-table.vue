@@ -79,23 +79,33 @@
                                       </path>
                                   </svg>
                               </div>
+                              <div @click="openModal(data.value.id)" class="w-4 mr-2 transform hover:text-purple-500 hover:scale-110" v-tooltip="'Edit'">
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                              </div>
                           </div>
                       </template>
-
                   </table-lite>
               </div>
           </div>
       </div>
+      <v-modal v-if="showModal" type="success" title="Edit match details" width="sm" @close="showModal = false">
+      <!-- Card -->
+      <div class="bg-white border shadow-sm rounded-xl p-4 dark:bg-gray-800 dark:border-gray-700">
+      </div>
+      </v-modal>
   </div>
   <!-- End Card -->
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import TableLite from "vue3-table-lite";
 import useMatchesList from './useMatchesList'
 import { DateTime } from 'luxon'
-
+const showModal = ref(false)
+const openModal = (id) => {
+    showModal.value = true
+}
 const {
   fetchMatches,
   deleteMatch,

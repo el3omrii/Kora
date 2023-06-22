@@ -18,8 +18,9 @@ class MatchController extends Controller
     }
     
     public function fixtures() {
-        $data = cache()->remember("fixtures", 3600, function() {
-            return json_decode(Helper::callApi("fixtures", "?date=". today()->format("Y-m-d") . "&season=2022"));
+        $settings = \App\Models\Settings::first();
+        $data = cache()->remember("fixtures", 3600, function() use ($settings) {
+            return json_decode(Helper::callApi("fixtures", "?date=". today()->format("Y-m-d") . "&season=" . $settings->current_season));
         });
         // filter based on leagues
         $leagues = json_decode(env("LEAGUES_ID"));

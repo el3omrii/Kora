@@ -92,8 +92,10 @@ export default function useMatchesList() {
         })
     })
   }
-  const updateMatch = (id) => {
-    axios.post('/matchs/'+id, { _method: 'PUT' })
+  const updateMatch = (id, data = null) => {
+    let postData = null
+    data ? postData = { _method: 'PUT', 'live_url': data.live_url, 'overview_url': data.overview_url } : postData = { _method: 'PUT' }
+    axios.post('/matchs/'+id, postData)
     .then(() => {
       fetchMatches()
     })

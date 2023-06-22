@@ -11,7 +11,8 @@ export default function useSettings() {
     website_title: null,
     website_description: null,
     cdn: null,
-    cdn_url: null
+    cdn_url: null,
+    current_season: null
   }
   const fetchSettings = () => {
 

@@ -32,6 +32,12 @@
           class="w-3/4 shadow-lg-sm border border-gray-300 text-gray-900 focus:outline-none rounded-md focus:border-indigo-500 p-2.5"
           placeholder="cdn URL" required="">
       </div>
+      <div class="mt-4">
+        <label for="current_season" class="block mb-2 text-sm font-medium text-gray-900">Current Season</label>
+        <input type="text" v-model="settings.current_season" name="current_season" id="current_season"
+          class="w-3/4 shadow-lg-sm border border-gray-300 text-gray-900 focus:outline-none rounded-md focus:border-indigo-500 p-2.5"
+          placeholder="current season for API use" required="">
+      </div>
     <div class="mt-8 flex gap-4">
       <button type="submit"
         class="py-2 px-3 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-teal-500 text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800">
