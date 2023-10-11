@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Settings;
 use App\Models\Post;
 use App\Models\Category;
+use App\Models\Tag;
 use App\Models\Fixture;
 use App\Http\Resources\PostResource;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -25,18 +27,35 @@ class ApiController extends Controller
     }
 
     public function fixtures() {
-        return Fixture::latest()->get();
+        return Fixture::whereDate('date', Carbon::today())->orderBy('date')->get();
     }
     public function fixture(String $id) {
-	    $fixture = Fixture::where("fixture_id", $id)->get();
-        $data = cache()->remember("fixture_$id", 3600, function() use ($id) {
+	    $fixture = Fixture::where("fixture_id", $id)->first();
+        $data = cache()->remember("fixture_$id", 600, function() use ($id) {
             return json_decode(\App\Helpers\Helper::callApi("fixtures?id=$id"));
         });
-        return response()->json(["fixture" => $fixture[0], "data" => $data->response[0]]);
+        $fixture->fixture_data = $data->response[0];
+        $fixture->save();
+        return response()->json(["fixture" => $fixture, "data" => $data->response[0]]);
+    }
+    
+    public function fixture_lineup(String $id) {
+	    $fixture = Fixture::where("fixture_id", $id)->first();
+        $date = Carbon::parse($fixture->date);
+        if (Carbon::now()->diffInMinutes($date, false) > 20)
+            return response()->json(["error:" => "not available yet, try again later .."]);
+        $data = cache()->remember("lineup_fixture_$id", 3600 * 12, function() use ($id) {
+            return json_decode(\App\Helpers\Helper::callApi("fixtures/lineups?fixture=$id"));
+        });
+        if (!$data->response)
+            return response()->json(["error:" => "not available yet, try again later .."]);
+        else 
+            return response()->json(["data" => $data->response]);
+            
     }
 
     public function fetch_post(String $slug) {
-        $article = Post::where('slug', $slug)->with('source', 'category')->firstOrFail();
+        $article = Post::where('slug', $slug)->with('source', 'category.parent', 'tags')->firstOrFail();
 	$article->related = $article->category->posts()->limit(6)->get()->setHidden(['content', 'pivot', 'source_id', 'source_link']);
 	// Check if the post has already been viewed in the current session
 	if (!Session::has('viewed_posts.'.$article->id)) {
@@ -49,7 +68,15 @@ class ApiController extends Controller
     public function category_posts(Request $request, String $slug) {
         $category = Category::where('slug', $slug)->firstOrFail();
         $orderBy = $request->orderBy;
-	    return PostResource::collection($category->posts()->orderBy($orderBy, 'desc')->paginate(12))->additional(['category' => $category]);
+	    return PostResource::collection($category->getAllPosts()->orderBy($orderBy, 'desc')->paginate(12))->additional(['category' => $category]);
+    }
+    public function tag_posts(Request $request, String $slug) {
+        $tag = Tag::where('slug', $slug)->firstOrFail();
+        $orderBy = $request->orderBy;
+	    return PostResource::collection($tag->posts()->with('category')->orderBy($orderBy, 'desc')->paginate(12))->additional(['tag' => $tag]);
+    }
+    public function popular_tags() {
+        return Tag::withCount('posts')->orderBy('posts_count')->limit(10)->get();
     }
 
     public function store_settings(Request $request) {
@@ -72,16 +99,21 @@ class ApiController extends Controller
     }
     
     public function latest_posts(Request $request) {
-        $data = null;
+        $latestPosts = null;
         $limit = $request->has('limit') ? $request->limit : 5;
         if ($request->has('category')) {
-            $data = Category::where('id', $request->category)->first()->posts();
+            $category = Category::with('children.posts')->find($request->category);
+            if (!$category) {
+                return response()->json(['message' => 'Category not found'], 404);
+            }
+            $latestPosts = $category->posts()
+                ->orWhereIn('category_id', $category->children->pluck('id'));
             if ($request->has('orderBy'))
-                $data->orderBy($request->orderBy, 'desc');
+                $latestPosts = $latestPosts->orderBy($request->orderBy, 'desc');
         }
         else
-            $data = Post::latest();
+            $latestPosts = Post::latest();
         
-        return $data->take($limit)->with('category')->get()->setHidden(['content', 'source_id', 'source_link', 'id']);
+        return $latestPosts->take($limit)->with('category')->get()->setHidden(['content', 'source_id', 'source_link', 'id']);
     }
 }

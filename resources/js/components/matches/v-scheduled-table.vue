@@ -91,6 +91,20 @@
       <v-modal v-if="showModal" type="success" title="Edit match details" width="sm" @close="showModal = false">
       <!-- Card -->
       <div class="bg-white border shadow-sm rounded-xl p-4 dark:bg-gray-800 dark:border-gray-700">
+        <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="live_url">Live URL</label>
+        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+          type="text" id="live_url" name="live_url" v-model="live_url" placeholder="https://www.example.com/stream/index.m3u8">
+      </div>
+        <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="live_url">Overview URL</label>
+        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
+          type="text" id="overview_url" name="overview_url" v-model="overview_url" placeholder="https://www.youtube.com/?watch=XXXXXX">
+      </div>
+      <div class="text-right mt-4">
+            <button @click="showModal = false" class="px-4 py-2 text-sm text-gray-600 focus:outline-none hover:underline">Cancel</button>
+            <button @click="update()" class="mr-2 px-4 py-2 text-sm rounded text-white bg-teal-500 focus:outline-none hover:bg-teal-400">Update</button>
+          </div>
       </div>
       </v-modal>
   </div>
@@ -103,9 +117,17 @@ import TableLite from "vue3-table-lite";
 import useMatchesList from './useMatchesList'
 import { DateTime } from 'luxon'
 const showModal = ref(false)
+const live_url = ref()
+const overview_url = ref()
+const match_id = ref()
 const openModal = (id) => {
     showModal.value = true
+    match_id.value = id
 }
+const update = () => {
+    updateMatch(match_id.value, {live_url: live_url.value, overview_url: overview_url.value})
+    showModal.value = false
+} 
 const {
   fetchMatches,
   deleteMatch,

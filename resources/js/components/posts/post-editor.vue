@@ -5,7 +5,7 @@
             <div class="p-1.5 min-w-full inline-block align-middle">
                 <form @submit.prevent="submit">
                     <div
-                        class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden dark:bg-slate-900 dark:border-gray-700">
+                        class="bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-slate-900 dark:border-gray-700">
                         <!-- Header -->
                         <div
                             class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-b border-gray-200 dark:border-gray-700">
@@ -48,36 +48,34 @@
 
                         <!-- New Article-->
                         <div class="flex sm:flex-col md:flex-row gap-4 p-4 divide-x">
-                            <div class="w-full">
+                            <div class="w-full dark:text-gray-300">
                                 <div>
                                     <label for="title">Post title</label>
                                     <input @keyup="post.slug = slugify(post.title)" type="text" id="title"
                                         v-model="post.title"
-                                        class="w-full text-base px-4 py-2 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500"
+                                        class="w-full text-base px-4 py-2 text-gray-700 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500"
                                         placeholder="Enter title" required focus>
-                                    <span v-if="errors && errors.title" class="text-sm text-red-500">{{ errors.title[0]
-                                    }}</span>
+                                    <span v-if="errors && errors.title" class="text-sm text-red-500">{{ errors.title[0] }}</span>
                                 </div>
                                 <div class="mt-2">
                                     <label for="slug">Post Slug</label>
                                     <input type="text" id="slug" v-model="post.slug"
-                                        class="w-full text-base px-4 py-2 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500"
+                                        class="w-full text-base px-4 py-2 text-gray-700 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500"
                                         placeholder="Enter slug" required>
-                                    <span v-if="errors && errors.slug" class="text-sm text-red-500">{{ errors.slug[0]
-                                    }}</span>
+                                    <span v-if="errors && errors.slug" class="text-sm text-red-500">{{ errors.slug[0] }}</span>
                                 </div>
                                 <div v-if="post.source_link" class="mt-2">
                                     <label for="link">Post from source</label>
                                     <input disabled type="text" id="link" v-model="post.source_link"
                                         class="w-full text-base px-4 py-2 border border-gray-300 focus:outline-none rounded-md focus:border-indigo-500">
                                 </div>
-                                <div class="mt-2 h-full">
+                                <div class="mt-2 h-full text-gray-800">
                                     <label>Post Content</label>
                                     <CKEditor.component :editor="ClassicEditor" :config="config" v-model="post.content">
                                     </CKEditor.component>
                                 </div>
                             </div>
-                            <div class="sm:w-full md:w-2/6 p-4">
+                            <div class="sm:w-full md:w-2/6 p-4 dark:text-gray-300">
                                 <div class="mb-4">
                                     <SwitchGroup>
                                         <div class="flex items-center justify-between">
@@ -110,13 +108,19 @@
                                                 class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                                         </label>
                                     </div>
-                                    <div v-if="post.category" class="mt-2">
+                                    <div v-if="post.category" class="mt-4">
                                         <label>Post Category</label>
                                         <div class="flex flex-wrap gap-4 mt-2">
                                             <v-checkbox :categories="categories" :selected="post.category" v-model="post.category_id"/>
                                         </div>
                                         <span v-if="errors && errors.categories" class="text-sm text-red-500">{{
                                             errors.categories[0] }}</span>
+                                    </div>
+                                    <div v-if="post.tags && tags" class="mt-4">
+                                        <label>Post Tags</label>
+                                        <div class="mt-2">
+                                            <v-tags :tags="tags" :post-tags="post.tags" @select-tags="value => selectedTags = value"/>
+                                        </div>                                        
                                     </div>
                                 </div>
                             </div>
@@ -135,6 +139,7 @@ import CKEditor from '@ckeditor/ckeditor5-vue'
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 import useNewPost from './useNewPost'
 import VCheckbox from '../v-checkbox.vue'
+import VTags from '../v-tags.vue'
 import { onMounted } from 'vue';
 import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue'
 
@@ -157,6 +162,8 @@ const {
     defaultImage,
     post,
     categories,
+    tags,
+    selectedTags,
     errors,
     editMode,
     updateCategory,
@@ -174,6 +181,8 @@ onMounted(() => {
     }
     axios.get(`/posts/categories`)
         .then((response) => categories.value = response.data)
+    axios.get(`/posts/tags`)
+        .then((response) => tags.value = response.data)
 })
 </script>
 <style>.ck-editor__editable_inline {

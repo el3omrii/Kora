@@ -13,7 +13,7 @@ class Helper {
         ->get(env('SOCCER_API'). $endpoint . $options);
     }
     public static function callTranslationApi($text) {
-        return json_decode(Http::withHeaders([
+        $trans = json_decode(Http::withHeaders([
             "accept" => "*/*",
             "x-api-key" => env('TRANSLATION_TOKEN'),
         ])->asForm()->post(env('TRANSLATION_API'), [
@@ -21,6 +21,9 @@ class Helper {
             "translation_language" => "ar",
             "text" => $text
         ]));
+        if (isset($trans->errors))
+            return json_decode('{ "translation": "" }');
+        return $trans;
     }    
 
     public static function createUploadFolder($post)
@@ -60,11 +63,27 @@ class Helper {
 
     public static function grab_image($url, $save_path) {
         $imageData = file_get_contents($url);
-        $imageInfo = getimagesizefromstring($imageData);
+        //$imageInfo = getimagesizefromstring($imageData);
         // Determine the file extension based on the MIME type
-        $extension = image_type_to_extension($imageInfo[2]); // 2 represents the IMAGETYPE constant for the image type
-        $image_path = "$save_path/" . Str::random(10) . $extension;
-        Storage::put("public" . $image_path, $imageData);
+        //$extension = image_type_to_extension($imageInfo[2]); // 2 represents the IMAGETYPE constant for the image type
+        //image path
+        $path = "$save_path/" . Str::random(10);
+        //small size
+        $image = \Image::make($imageData)->resize(140, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->encode('webp', 90);
+        $image_path = $path . "-small.webp";
+        Storage::put("public" . $image_path, $image);
+        //small size
+        $image = \Image::make($imageData)->resize(360, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })->encode('webp', 90);
+        $image_path = $path . "-medium.webp";
+        Storage::put("public" . $image_path, $image);
+        //regular size
+        $image = \Image::make($imageData)->encode('webp', 90);
+        $image_path = $path . ".webp";
+        Storage::put("public" . $image_path, $image);
         return $image_path;
     }
     public static function grab_logo($url, $save_path) {

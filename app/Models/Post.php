@@ -34,4 +34,12 @@ class Post extends Model
         // Parse the created_at field using Carbon and format it
 	return Carbon::parse($this->attributes["created_at"])->locale('ar')->diffForHumans(["parts"=>2,"join"=>", "]);//->isoFormat('LL [في] HH:mm');
     }
+
+    /*protected function getContentAttribute($value) {
+        $tags = $this->tags;
+        foreach ($tags as $tag) {
+            $value = str_replace($tag->name, '<NuxtLink to="/tag/' . $tag->slug . '">' . $tag->name . '</NuxtLink>', $value);
+        }
+        return $value;
+    }*/
 }

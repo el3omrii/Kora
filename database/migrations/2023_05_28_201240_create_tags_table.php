@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('color');
-            $table->timestamps();
+            $table->string('slug');
         });
 
-        Schema::create('tag_post', function (Blueprint $table) {
+        Schema::create('post_tag', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tag_id');
             $table->foreignId('post_id');

@@ -36,7 +36,7 @@ class SourceController extends Controller
             "description" => $request->description,
             "logo" => $upload,
             "content_regex" => $request->content_type == "regex" ? $request->content_regex : null,
-            "content_xpath" => $request->content_type == "xpath" ? $request->content_regex : null,
+            "content_xpath" => $request->content_type == "xpath" ? $request->content_xpath : null,
             "image_type" => $request->image_type,
             "category_id" => $request->category
         ]);
@@ -59,7 +59,8 @@ class SourceController extends Controller
         $source->feed_url = $request->feed_url;
         $source->description = $request->description;
         $source->category_id = $request->category;
-        $source->content_regex = $request->content_regex;
+        $source->content_regex = $request->content_type == "regex" ? $request->content_regex : null;
+        $source->content_xpath = $request->content_type == "xpath" ? $request->content_regex : null;
         $source->image_type = $request->image_type;
         if ($source->save())
             return redirect('/sources')->with("message", (object)["type"=>"success" , "content" => "source was updated"]);

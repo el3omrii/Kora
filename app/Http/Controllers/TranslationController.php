@@ -23,4 +23,9 @@ class TranslationController extends Controller
         $translation->save();
         return response('ok', 200);
     }
+    public function destroy (Translation $translation) {
+        if ($translation->delete())
+            return response('ok', 200);
+        return response('error', 502);
+    }
 }

@@ -70,7 +70,7 @@
                 </tr>
               </thead>
   
-              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700 dark:text-white">
                 <tr v-for="(item,idx) in categories">
                   <td class="text-center">
                       <label :for="`check${idx}`">

@@ -7,6 +7,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\MatchController;
 use App\Http\Controllers\TranslationController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SitemapController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,6 +53,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/categories', [PostController::class, 'storeCategory'])->name('post.categories.store');
     Route::delete('/posts/categories/{category}', [PostController::class, 'destroyCategory'])->name('post.categories.destroy');
     Route::put('/posts/categories/{category}', [PostController::class, 'updateCategory'])->name('post.categories.update');
+    /* POSTS TAGS */
+    Route::get('/posts/tags', [PostController::class, 'tags'])->name('post.tags');
+    Route::post('/posts/tags', [PostController::class, 'storeTag'])->name('post.tags.store');
+    Route::delete('/posts/tags/{category}', [PostController::class, 'destroTag'])->name('post.tags.destroy');
     /* Matchs */
     Route::get('/matchs', [MatchController::class, 'index'])->name('match.index');
     Route::get('/matchs/scheduled', [MatchController::class, 'scheduled'])->name('match.scheduled');
@@ -64,9 +69,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/translations', [TranslationController::class, 'index'])->name('translations');
     Route::post('/translations', [TranslationController::class, 'translations']);
     Route::put('/translations/{translation}', [TranslationController::class, 'saveTranslation']);
+    Route::delete('/translations/{translation}', [TranslationController::class, 'destroy']);
     /* Settings */
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     //Route::post('/posts/fetch', [PostController::class, 'fetch'])->name('post.fetch');
 });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

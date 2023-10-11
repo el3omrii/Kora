@@ -14,7 +14,9 @@ export default function useNewPost () {
       content: '',
     })
     const categories = ref([])
+    const tags = ref([])
     const selectedCategories = ref([])
+    const selectedTags = ref([])
     const errors = ref([])
     const editMode = ref(false)
     
@@ -56,6 +58,7 @@ export default function useNewPost () {
 
     const submit = () => {
       post.value.categories = selectedCategories.value
+      post.value.tags = selectedTags.value
       post.value.image = imageFile.value
       /*let data = new FormData()
       Object.keys(post.value).forEach(element => {
@@ -89,6 +92,8 @@ export default function useNewPost () {
       defaultImage,
       post,
       categories,
+      tags,
+      selectedTags,
       selectedCategories,
       errors,
       editMode,

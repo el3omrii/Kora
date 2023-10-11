@@ -37,6 +37,8 @@ export default function useTranslations() {
       sortBy.value = args[2]
       sort.value =  args[3]
     }
+    if (args[1])
+      perPage.value = args[1]
     
     axios.post('/translations', {
         q: searchQuery.value,

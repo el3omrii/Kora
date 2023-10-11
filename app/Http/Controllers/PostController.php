@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Resources\PostResource;
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -47,7 +48,7 @@ class PostController extends Controller
     }
     public function edit(Post $post, Request $request) {
         if ($request->ajax())
-            return $post->load('category')->setHidden(['created_at', 'updated_at']);
+            return $post->load('category', 'tags')->setHidden(['created_at', 'updated_at']);
         return view("post.edit", compact('post'));
     }
     public function set_featured(Post $post) {
@@ -80,14 +81,32 @@ class PostController extends Controller
         }
         //save
         $post->save();
+        //associate tags
+        $tagsId = [];
+        foreach ($request->tags as $tag) {
+            if(!array_key_exists('id', $tag)) {
+                $new = Tag::create([
+                    "name" => $tag['name'],
+                    "slug" => \App\Helpers\Helper::make_slug($tag['name'])
+                ]);
+                $tagsId[] = $new->id;
+            } else {
+                $tagsId[] = $tag['id'];
+            }
+        }
+        $post->tags()->attach($tagsId);
+        //$post->tags()
         return response('ok', 200);
     }
     public function destroy (Post $post) 
     {
         // remove pic
-        if(Storage::delete("public".$post->getRawOriginal('image')))
+        if(Storage::delete("public".$post->getRawOriginal('image'))){
+            Storage::delete("public".preg_replace('/.webp/', '-small.webp',$post->getRawOriginal('image')));
+            Storage::delete("public".preg_replace('/.webp/', '-medium.webp',$post->getRawOriginal('image')));
             if ($post->delete())
                 return response('OK', 200);
+        }
         return response('not ok', 500);
     }
     public function categories(Request $request) {
@@ -119,6 +138,33 @@ class PostController extends Controller
             return response("OK", 200);
         return response("Not ok", 500);
     }
+    public function tags(Request $request) {
+        if ($request->ajax()) {
+            return Tag::all();
+        }
+        return view("post.tags");
+    }
+    public function storeTag (Request $request) {
+        $request->validate([
+            "name" => "required|unique:tags|max:255",
+        ]);
+        Tag::create([
+            "name" => $request->name,
+            "slug" => \App\Helpers\Helper::make_slug($request->name)
+        ]);
+        return response("OK", 200);
+    }
+    public function updateTag (Tag $tag, Request $request) {
+        $tag->name = $request->name;
+        $tag->save();
+        return response("OK", 200);
+    }
+    public function destroyTag (Tag $tag) {
+        if ($tag->delete())
+            return response("OK", 200);
+        return response("Not ok", 500);
+    }
+    
     public function fetch(Request $request) {
         $query = Post::orderBy($request->sortBy, $request->sort);
         if($request->q)

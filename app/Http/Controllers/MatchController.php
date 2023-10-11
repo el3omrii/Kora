@@ -20,7 +20,7 @@ class MatchController extends Controller
     public function fixtures() {
         $settings = \App\Models\Settings::first();
         $data = cache()->remember("fixtures", 3600, function() use ($settings) {
-            return json_decode(Helper::callApi("fixtures", "?date=". today()->format("Y-m-d") . "&season=" . $settings->current_season));
+            return json_decode(Helper::callApi("fixtures", "?date=" . today()->format("Y-m-d") . "&season=" . $settings->current_season));
         });
         // filter based on leagues
         $leagues = json_decode(env("LEAGUES_ID"));
@@ -50,7 +50,7 @@ class MatchController extends Controller
             'name' => $request->fixture_data["league"]["name"],
         ];
         $venue = [
-            'id' => $fixture->fixture_data["fixture"]["venue"]["id"],
+            'id' => $fixture->fixture_data["fixture"]["venue"]["id"] ? $fixture->fixture_data["fixture"]["venue"]["id"] : substr(base_convert(md5($fixture->fixture_data["fixture"]["venue"]["name"]), 16, 10) , -5),
             'name' => $fixture->fixture_data["fixture"]["venue"]["name"] . ', ' . $fixture->fixture_data["fixture"]["venue"]["city"],
         ];
         if ($trans = Translation::find($home['id']))
@@ -75,23 +75,23 @@ class MatchController extends Controller
             ]);
             $fixture->away = $trans;
         }
-        if ($trans = Translation::find($league['id']))
+        if ($trans = Translation::find('l'.$league['id']))
             $fixture->league = $trans->value;
         else {
             $trans = Helper::callTranslationApi($league['name'])->translation;
             Translation::create([
-                "key" => $league['id'],
+                "key" => 'l'.$league['id'],
                 "original" => $league['name'],
                 "value" => $trans
             ]);
             $fixture->league = $trans;
         }
-        if ($trans = Translation::find($venue['id']))
+        if ($trans = Translation::find('v'.$venue['id']))
             $fixture->venue = $trans->value;
         else {
-            $trans = Helper::callTranslationApi($league['name'])->translation;
+            $trans = Helper::callTranslationApi($venue['name'])->translation;
             Translation::create([
-                "key" => $venue['id'],
+                "key" => 'v'.$venue['id'],
                 "original" => $venue['name'],
                 "value" => $trans
             ]);
@@ -111,7 +111,7 @@ class MatchController extends Controller
         $fixture->save();
         return $fixture;
     }
-    public function update (Fixture $fixture) {
+    public function update (Request $request, Fixture $fixture) {
         //check for translations
         $home = [
             'id' => $fixture->fixture_data["teams"]["home"]["id"],
@@ -126,18 +126,21 @@ class MatchController extends Controller
             'name' => $fixture->fixture_data["league"]["name"],
         ];
         $venue = [
-            'id' => $fixture->fixture_data["fixture"]["venue"]["id"],
+            'id' => $fixture->fixture_data["fixture"]["venue"]["id"] ? $fixture->fixture_data["fixture"]["venue"]["id"] : substr(base_convert(md5($fixture->fixture_data["fixture"]["venue"]["name"]), 16, 10) , -5),
             'name' => $fixture->fixture_data["fixture"]["venue"]["name"] . ', ' . $fixture->fixture_data["fixture"]["venue"]["city"],
         ];
         if ($trans = Translation::find($home['id']))
             $fixture->home = $trans->value;
         if ($trans = Translation::find($away['id']))
             $fixture->away = $trans->value;
-        if ($trans = Translation::find($league['id']))
+        if ($trans = Translation::find('l'.$league['id']))
             $fixture->league = $trans->value;
-        if ($trans = Translation::find($venue['id']))
+        if ($trans = Translation::find('v'.$venue['id']))
             $fixture->venue = $trans->value;
-        
+        if ($request->has('overview_url'))
+            $fixture->overview_url = $request->overview_url;
+        if ($request->has('live_url'))
+            $fixture->live_url = $request->live_url;
         $fixture->save();
         return $fixture;
     }
@@ -146,6 +149,7 @@ class MatchController extends Controller
         return response('OK', 200);
     }
     public function load_scheduled (Request $request) {
-        return FixtureResource::collection(Fixture::paginate($request->perPage));
+        $query = Fixture::orderBy($request->sortBy, $request->sort);
+        return FixtureResource::collection($query->paginate($request->perPage));
     }
 }

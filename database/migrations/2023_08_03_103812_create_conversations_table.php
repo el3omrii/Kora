@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('translations', function (Blueprint $table) {
-            $table->string('key')->primary();
-            $table->string('value');
-            $table->string('original');
+        Schema::create('conversations', function (Blueprint $table) {
+            $table->id();
+            $table->text('message');
+            $table->string('username');
+            $table->string('channel');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('translations');
+        Schema::dropIfExists('conversations');
     }
 };

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->string('website_title');
-            $table->string('website_description');
+            $table->text('website_description');
             $table->boolean('cdn')->default(false);
             $table->string('cdn_url')->nullable();
             $table->timestamps();

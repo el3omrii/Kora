@@ -12,9 +12,9 @@ export default function useMatchesList() {
   const tableColumns = [
     { label: 'League', field: 'league' },
     { label: 'Home Team', field: 'homeTeam' },
-    { label: 'Date', field: 'date'},
+    { label: 'Date', field: 'date', sortable: true},
     { label: 'Away Team', field: 'awayTeam' },
-    { label: 'Status', field: 'status', sortable: true },
+    { label: 'Status', field: 'status' },
     { label: 'Actions', field:'actions' },
   ]
   const perPage = ref(10)
@@ -23,7 +23,7 @@ export default function useMatchesList() {
   const perPageOptions = [10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(true)
+  const sort = ref('desc')
 
   const dataMeta = computed(() => {
     const localItemsCount = refMatchesListTable.value ? refMatchesListTable.value.rows.length : 0
@@ -41,20 +41,22 @@ export default function useMatchesList() {
   }
 
   watch([currentPage, perPage, searchQuery], () => {
-    refetchData()
+    fetchMatches()
   })  
 
   const fetchMatches = (...args) => {
     if (args[2]) {
       sortBy.value = args[2]
-      isSortDirDesc.value=  args[3] === 'asc' ? false : true
+      sort.value =  args[3]
     }
+    if (args[1])
+      perPage.value = args[1]
     axios.post('/matchs/scheduled', {
         q: searchQuery.value,
         perPage: perPage.value,
         page: currentPage.value,
         sortBy: sortBy.value,
-        sortDesc: isSortDirDesc.value,
+        sort: sort.value,
       })
       .then(response => {
         matches.value = response.data.data 
@@ -125,7 +127,7 @@ export default function useMatchesList() {
     perPageOptions,
     searchQuery,
     sortBy,
-    isSortDirDesc,
+    sort,
     matches,
     getCurrentPage,
     refetchData,

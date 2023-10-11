@@ -64,13 +64,13 @@ class ScraperController extends Controller
 
                 $record = [
                     'title' => $item['title'],
-                    'description' => $item['description'],
-                    'image' => $item[$source->image_type]["@attributes"]["url"],
+                    'description' => key_exists('description', $item) ? $item['description'] : '' ,
+                    'image' => key_exists('image', $item) ? $item['media:content']["@attributes"]["url"] : '',
                     'link' => $item['link'],
                     'content' => key_exists('content_encoded', $item) ? $item['content_encoded'] : '' ,
                     'pubDate' => $item['pubDate'],
                     'checked' => false
-        ];
+                ];
                 $items[] = $record;
             }
             return $items;
